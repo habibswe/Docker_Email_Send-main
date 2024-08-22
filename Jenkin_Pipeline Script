@@ -10,9 +10,8 @@ pipeline {
             steps {
                 echo 'Checking out the repository...'
                 checkout([$class: 'GitSCM',
-                          branches: [[name: 'dockerization']],
-                          userRemoteConfigs: [[url: 'https://github.com/Jubear-Jabber-Jetu/Docker.git', credentialsId: 'github']]
-            }
+                          branches: [[name: 'main']], // Ensure this branch exists
+                          userRemoteConfigs: [[url: 'https://github.com/habibswe/Docker_Email_Send-main.git/', credentialsId: 'github']]
         }
 
         stage('Build Docker Image') {
