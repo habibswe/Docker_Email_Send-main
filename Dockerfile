@@ -1,3 +1,40 @@
+# # Use an official Maven image as a parent image
+# FROM maven:3.8.4-openjdk-11
+
+# # Set the working directory
+# WORKDIR /usr/src/app
+
+# # Install necessary packages
+# RUN apt-get update \
+#     && apt-get install -y \
+#         firefox-esr \
+#         wget \
+#         bzip2 \
+#         xvfb \
+#         libdbus-glib-1-2 \
+#     && rm -rf /var/lib/apt/lists/*
+
+# # Install GeckoDriver v0.33.0
+# RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz \
+#     && tar -xzf geckodriver-v0.33.0-linux64.tar.gz -C /usr/local/bin/ \
+#     && rm geckodriver-v0.33.0-linux64.tar.gz \
+#     && chmod +x /usr/local/bin/geckodriver
+
+# # Copy the pom.xml file and download dependencies
+# COPY pom.xml .
+
+# # Download dependencies
+# RUN mvn dependency:resolve
+
+# # Copy the rest of the application
+# COPY . .
+
+# # Clean and run the tests, but always exit with 0
+# CMD ["sh", "-c", "mvn clean test || true"]
+
+
+
+
 # Use an official Maven image as a parent image
 FROM maven:3.8.4-openjdk-11
 
@@ -12,6 +49,7 @@ RUN apt-get update \
         bzip2 \
         xvfb \
         libdbus-glib-1-2 \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install GeckoDriver v0.33.0
@@ -19,6 +57,11 @@ RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v0.33.0/gec
     && tar -xzf geckodriver-v0.33.0-linux64.tar.gz -C /usr/local/bin/ \
     && rm geckodriver-v0.33.0-linux64.tar.gz \
     && chmod +x /usr/local/bin/geckodriver
+
+# Install Allure Commandline
+RUN wget -qO- https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip | \
+    funzip > allure.zip && unzip allure.zip -d /opt/ && rm allure.zip && \
+    ln -s /opt/allure-2.21.0/bin/allure /usr/local/bin/allure
 
 # Copy the pom.xml file and download dependencies
 COPY pom.xml .
